@@ -1,0 +1,4 @@
+node_modules
+dist
+coverage
+newrelic_agent.log
