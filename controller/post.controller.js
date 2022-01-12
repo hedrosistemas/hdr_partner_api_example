@@ -45,45 +45,95 @@ module.exports = async function postBackController(req, res) {
    * Do something with the information...
    */
 
-   const _processRMS2AndAddToMetrics = (metrics, rms2) => {
-    const rms2Data = Object.assign({}, rms2);
+  const _processDataAndAddToMetrics = (metrics, dataProcessed) => {
+    const dataProcessedCopy = Object.assign({}, dataProcessed);
+
+    const keyByService = {
+      "RMS2": 'rms2',
+      "RMMS": 'rmms',
+      "TEMP": 'temp'
+    };
+
+    const key = keyByService[dataProcessedCopy.serviceType];
+
+    // temperature doesn't have axis
+    if (!dataProcessedCopy.axis) {
+      _addNoAxisDataToMetrics(metrics, dataProcessedCopy, key);
+      return;
+    }
 
     // Just one axis
-    if (rms2Data.axis !== 'all') {
-      _addRMS2MonoAxisDataToMetrics(metrics, rms2Data, rms2Data.axis, 0);
+    if (dataProcessedCopy.axis !== 'all') {
+      const axisIndex = 0;
+      _addMonoAxisDataToMetrics(metrics, dataProcessedCopy, dataProcessedCopy.axis, axisIndex, key);
       return;
     }
 
     // more than one axis   
-    _addRMS2AllAxisDataToMetrics(metrics, rms2Data);
-
+    _addAllAxisDataToMetrics(metrics, dataProcessedCopy, key);
   };
 
-  const _addRMS2MonoAxisDataToMetrics = (metrics, rms2Data, axis, axisIndex) => {
-    const baseObj = Object.assign({}, rms2Data);
-    delete baseObj.rms2;
+  const _addNoAxisDataToMetrics = (metrics, dataProcessedCopy, key) => {
+    const baseObj = Object.assign({}, dataProcessedCopy);
+    delete baseObj[key];
     delete baseObj.time;
-    baseObj.axis = axis;
 
-    rms2Data.rms2[axisIndex].forEach((data, index) => {
+    dataProcessedCopy[key].forEach((data, index) => {
       metrics.push({
         value: data,
-        time: rms2Data.time[index],
+        time: dataProcessedCopy.time[index],
         parameters: { ...baseObj }
       });
     });
   };
 
-  const _addRMS2AllAxisDataToMetrics = (metrics, rms2Data) => {
-    const AXIS = ["x", "y", "z"];
+  const _addMonoAxisDataToMetrics = (metrics, dataProcessedCopy, axis, axisIndex, key) => {
+    const baseObj = Object.assign({}, dataProcessedCopy);
+    delete baseObj[key];
+    delete baseObj.time;
+    baseObj.axis = axis;
 
-    rms2Data.rms2.forEach((_, index) => {
-      const axis = AXIS[index];
-      _addRMS2MonoAxisDataToMetrics(metrics, rms2Data, axis, index);
+    dataProcessedCopy[key].forEach((data, index) => {
+      metrics.push({
+        value: data[axisIndex],
+        time: dataProcessedCopy.time[index],
+        parameters: { ...baseObj }
+      });
     });
   };
 
-  // Exemplo de dado de temperatura processado pela biblioteca
+  const _addAllAxisDataToMetrics = (metrics, dataProcessedCopy, key) => {
+    const AXIS = ["x", "y", "z"];
+
+    dataProcessedCopy[key].forEach((_, index) => {
+      const axis = AXIS[index];
+      _addMonoAxisDataToMetrics(metrics, dataProcessedCopy, axis, index, key);
+    });
+  };  
+
+  /**   
+    metrics =  [
+      {
+        "value": 10,
+        "time": "2022-01-19T00:30:00Z",
+        "parameters": {...}
+      }
+     ]     
+   */
+  const metrics = [];
+
+  processedMessages.forEach(data => {
+    _processDataAndAddToMetrics(metrics, data);
+  });
+
+  res.status(200).json(metrics)
+
+
+  
+  /**
+   * Mockups
+   * 
+   * // Exemplo de dado de temperatura processado pela biblioteca
   const TempExampleAfterProcessing = {
     serviceType: 'TEMP',
     mac: '4548AA000001',
@@ -152,34 +202,9 @@ module.exports = async function postBackController(req, res) {
     RMSExampleAfterProcessing,
     RMMSExampleAfterProcessing
   ];
-
-  /**   
-    metrics =  [
-      {
-        "value": 10,
-        "time": "2022-01-19T00:30:00Z",
-        "parameters": {...}
-      }
-     ]     
+   * 
+   * 
+   * 
    */
-  const metrics = [];
-
-  ArrayOfProcessedMessages.forEach(data => {
-
-    switch (data.serviceType) {
-      case 'RMS2':
-        _processRMS2AndAddToMetrics(metrics, data);
-        break;
-      case 'TEMP':
-        break;
-      case 'RMMS':
-        break;
-      default:
-        break;
-    }
-
-  });
-
-  res.status(200).json(metrics)
 
 }
