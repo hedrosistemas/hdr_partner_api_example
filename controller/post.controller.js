@@ -109,7 +109,7 @@ module.exports = async function postBackController(req, res) {
       const axis = AXIS[index];
       _addMonoAxisDataToMetrics(metrics, dataProcessedCopy, axis, index, key);
     });
-  };  
+  };
 
   /**   
     metrics =  [
@@ -123,13 +123,16 @@ module.exports = async function postBackController(req, res) {
   const metrics = [];
 
   processedMessages.forEach(data => {
+    if (data.serviceType !== "TEMP" && data.serviceType !== "RMMS" && data.serviceType !== "RMS2") return;
     _processDataAndAddToMetrics(metrics, data);
   });
 
-  res.status(200).json(metrics)
+  // Metrics populated from here...
+
+  res.status(200).json({})
 
 
-  
+
   /**
    * Mockups
    * 
