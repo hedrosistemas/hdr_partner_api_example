@@ -1,5 +1,5 @@
 // imports library
-const { processHealth, processTemp, processRMMS, processAccRaw, processFFT, processRMS2, HDR_SERVICES_TYPE } = require('hdr-process-data');
+const { processHealth, processTemp, processRMMS, processAccRaw, processFFT, processRMS2, process4T20, processNTC, processPOT, HDR_SERVICES_TYPE } = require('hdr-process-data');
 
 const FullExample = () => {
 
@@ -76,6 +76,15 @@ const FullExample = () => {
         break;
       case HDR_SERVICES_TYPE.accRaw:
         processedMessages.push({ serviceType: 'ACC RAW', mac: data.mac, rssi: data.rssi, ...processAccRaw(data.raw, data.time) })
+        break;
+       case HDR_SERVICES_TYPE._4t20:
+        processedMessages.push({ serviceType: '_4T20', mac: data.mac, ...process4T20(data.raw, data.time) })
+        break;
+      case HDR_SERVICES_TYPE.ntc:
+        processedMessages.push({ serviceType: 'NTC', mac: data.mac, ...processNTC(data.raw, data.time) })
+        break;
+      case HDR_SERVICES_TYPE.pot:
+        processedMessages.push({ serviceType: 'POT', mac: data.mac, ...processPOT(data.raw, data.time) })
         break;
       default:
         break;
