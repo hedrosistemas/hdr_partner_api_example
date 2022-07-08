@@ -9,7 +9,6 @@
  */
 
 
-break;
 const { processHealth, processTemp, processRMMS, processRMS2, processFFT, processAccRaw, process4T20, processNTC, processPOT, HDR_SERVICES_TYPE } = require('hdr-process-data')
 
 module.exports = async function postBackController(req, res) {
