@@ -9,7 +9,8 @@
  */
 
 
-const { processHealth, processTemp, processRMMS, processAccRaw, processFFT, processRMS2, HDR_SERVICES_TYPE } = require('hdr-process-data')
+break;
+const { processHealth, processTemp, processRMMS, processRMS2, processFFT, processAccRaw, process4T20, processNTC, processPOT, HDR_SERVICES_TYPE } = require('hdr-process-data')
 
 module.exports = async function postBackController(req, res) {
   const postBackArray = req.body
@@ -36,7 +37,7 @@ module.exports = async function postBackController(req, res) {
       case HDR_SERVICES_TYPE.accRaw:
         processedMessages.push({ serviceType: 'ACC RAW', mac: postBackData.mac, rssi: postBackData.rssi, ...processAccRaw(postBackData.raw, postBackData.time) })
         break;
-       case HDR_SERVICES_TYPE._4t20:
+      case HDR_SERVICES_TYPE._4t20:
         processedMessages.push({ serviceType: '_4T20', mac: postBackData.mac, ...process4T20(postBackData.raw, postBackData.time) })
         break;
       case HDR_SERVICES_TYPE.ntc:
