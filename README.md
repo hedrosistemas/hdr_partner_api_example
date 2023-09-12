@@ -6,7 +6,7 @@
 Nós usamos a versão Stable do Node.
 
 ### Windows
-Vá até o site do [NodeJS](https://nodejs.org/en/) e baixe a versão LTS (atualmente 14.18.0). Após a instalação, abra o **Powershell** e rode:
+Vá até o site do [NodeJS](https://nodejs.org/en/) e baixe a versão LTS (atualmente 18.17.1). Após a instalação, abra o **Powershell** e rode:
 ```bash
   npm install -g yarn  
 ```
@@ -23,7 +23,7 @@ source ~/.profile
 ```
 Com o **NVM** instalado, é hora de instalar o Node. Para instalá-lo, rode:
 ```bash
-nvm install 14.18.0
+nvm install --lts
 ```
 
 Para verificar sua instalação, digite:

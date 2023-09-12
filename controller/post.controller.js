@@ -8,137 +8,167 @@
  * the proper function to process it.
  */
 
-
-const { processHealth, processTemp, processRMMS, processRMS2, processFFT, processAccRaw, process4T20, processNTC, processPOT, HDR_SERVICES_TYPE } = require('hdr-process-data')
+const {
+  getHealth,
+  getTemp,
+  getRMMS,
+  getAccRaw,
+  getFFT,
+  getRMS2,
+  get4T20,
+  getNtc,
+  getPot,
+  HDR_SERVICES_TYPE,
+} = require("hdr-process-data");
 
 module.exports = async function postBackController(req, res) {
-  const postBackArray = req.body
+  // data received from post (raw data) - Array of Objects
+  const arrayRawData = req.body
 
-  const processedMessages = []
-
-  postBackArray.forEach(postBackData => {
-    switch (postBackData.serviceType) {
+  // verify each objects and switch case for verify what service type is of array of data.
+  arrayRawData.forEach(rawData => {
+    switch (rawData.serviceType) {
       case HDR_SERVICES_TYPE.health:
-        processedMessages.push({ serviceType: 'HEALTH', mac: postBackData.mac, rssi: postBackData.rssi, ...processHealth(postBackData.raw, postBackData.time) })
+        // do something with the health information
+        // save on database
+        // send to your broker
+        // process and get the health information
+        const healthInfo = getHealth(rawData.raw,rawData.time)
+        // the result have either concept for success or error on unzip data.
+        if(healthInfo.isLeft()) console.error(healthInfo.value)
+        else console.log(healthInfo.value)
         break;
-      case HDR_SERVICES_TYPE.temp:
-        processedMessages.push({ serviceType: 'TEMP', mac: postBackData.mac, rssi: postBackData.rssi, ...processTemp(postBackData.raw, postBackData.time) })
-        break;
-      case HDR_SERVICES_TYPE.rmms:
-        processedMessages.push({ serviceType: 'RMMS', mac: postBackData.mac, rssi: postBackData.rssi, ...processRMMS(postBackData.raw, postBackData.time) })
-        break;
-      case HDR_SERVICES_TYPE.rms2:
-        processedMessages.push({ serviceType: 'RMS2', mac: postBackData.mac, rssi: postBackData.rssi, ...processRMS2(postBackData.raw, postBackData.time) })
-        break;
-      case HDR_SERVICES_TYPE.fft:
-        processedMessages.push({ serviceType: 'FFT', mac: postBackData.mac, rssi: postBackData.rssi, ...processFFT(postBackData.raw, postBackData.time) })
-        break;
-      case HDR_SERVICES_TYPE.accRaw:
-        processedMessages.push({ serviceType: 'ACC RAW', mac: postBackData.mac, rssi: postBackData.rssi, ...processAccRaw(postBackData.raw, postBackData.time) })
-        break;
-      case HDR_SERVICES_TYPE._4t20:
-        processedMessages.push({ serviceType: '_4T20', mac: postBackData.mac, ...process4T20(postBackData.raw, postBackData.time) })
-        break;
-      case HDR_SERVICES_TYPE.ntc:
-        processedMessages.push({ serviceType: 'NTC', mac: postBackData.mac, ...processNTC(postBackData.raw, postBackData.time) })
-        break;
-      case HDR_SERVICES_TYPE.pot:
-        processedMessages.push({ serviceType: 'POT', mac: postBackData.mac, ...processPOT(postBackData.raw, postBackData.time) })
-        break;
+    
       default:
         break;
     }
-  })
-
-  /**
-   * Do something with the information...
-   */
-
-  const _processDataAndAddToMetrics = (metrics, dataProcessed) => {
-    const dataProcessedCopy = Object.assign({}, dataProcessed);
-
-    const keyByService = {
-      "RMS2": 'rms2',
-      "RMMS": 'rmms',
-      "TEMP": 'temp'
-    };
-
-    const key = keyByService[dataProcessedCopy.serviceType];
-
-    // temperature doesn't have axis
-    if (!dataProcessedCopy.axis) {
-      _addNoAxisDataToMetrics(metrics, dataProcessedCopy, key);
-      return;
-    }
-
-    // Just one axis
-    if (dataProcessedCopy.axis !== 'all') {
-      const axisIndex = 0;
-      _addMonoAxisDataToMetrics(metrics, dataProcessedCopy, dataProcessedCopy.axis, axisIndex, key);
-      return;
-    }
-
-    // more than one axis   
-    _addAllAxisDataToMetrics(metrics, dataProcessedCopy, key);
-  };
-
-  const _addNoAxisDataToMetrics = (metrics, dataProcessedCopy, key) => {
-    const baseObj = Object.assign({}, dataProcessedCopy);
-    delete baseObj[key];
-    delete baseObj.time;
-
-    dataProcessedCopy[key].forEach((data, index) => {
-      metrics.push({
-        value: data,
-        time: dataProcessedCopy.time[index],
-        parameters: { ...baseObj }
-      });
-    });
-  };
-
-  const _addMonoAxisDataToMetrics = (metrics, dataProcessedCopy, axis, axisIndex, key) => {
-    const baseObj = Object.assign({}, dataProcessedCopy);
-    delete baseObj[key];
-    delete baseObj.time;
-    baseObj.axis = axis;
-
-    dataProcessedCopy[key].forEach((data, index) => {
-      metrics.push({
-        value: data[axisIndex],
-        time: dataProcessedCopy.time[index],
-        parameters: { ...baseObj }
-      });
-    });
-  };
-
-  const _addAllAxisDataToMetrics = (metrics, dataProcessedCopy, key) => {
-    const AXIS = ["x", "y", "z"];
-
-    dataProcessedCopy[key].forEach((_, index) => {
-      const axis = AXIS[index];
-      _addMonoAxisDataToMetrics(metrics, dataProcessedCopy, axis, index, key);
-    });
-  };
-
-  /**   
-    metrics =  [
-      {
-        "value": 10,
-        "time": "2022-01-19T00:30:00Z",
-        "parameters": {...}
-      }
-     ]     
-   */
-  const metrics = [];
-
-  processedMessages.forEach(data => {
-    if (data.serviceType !== "TEMP" && data.serviceType !== "RMMS" && data.serviceType !== "RMS2") return;
-    _processDataAndAddToMetrics(metrics, data);
   });
 
-  // Metrics populated from here...
+  // const processedMessages = []
 
-  res.status(200).json({})
+  // postBackArray.forEach(postBackData => {
+  //   switch (postBackData.serviceType) {
+  //     case HDR_SERVICES_TYPE.health:
+  //       processedMessages.push({ serviceType: 'HEALTH', mac: postBackData.mac, rssi: postBackData.rssi, ...getHealth(postBackData.raw, postBackData.time) })
+  //       break;
+  //     case HDR_SERVICES_TYPE.temp:
+  //       processedMessages.push({ serviceType: 'TEMP', mac: postBackData.mac, rssi: postBackData.rssi, ...getTemp(postBackData.raw, postBackData.time) })
+  //       break;
+  //     case HDR_SERVICES_TYPE.rmms:
+  //       processedMessages.push({ serviceType: 'RMMS', mac: postBackData.mac, rssi: postBackData.rssi, ...getRMMS(postBackData.raw, postBackData.time) })
+  //       break;
+  //     case HDR_SERVICES_TYPE.rms2:
+  //       processedMessages.push({ serviceType: 'RMS2', mac: postBackData.mac, rssi: postBackData.rssi, ...getRMS2(postBackData.raw, postBackData.time) })
+  //       break;
+  //     case HDR_SERVICES_TYPE.fft:
+  //       processedMessages.push({ serviceType: 'FFT', mac: postBackData.mac, rssi: postBackData.rssi, ...getFFT(postBackData.raw, postBackData.time) })
+  //       break;
+  //     case HDR_SERVICES_TYPE.accRaw:
+  //       processedMessages.push({ serviceType: 'ACC RAW', mac: postBackData.mac, rssi: postBackData.rssi, ...getAccRaw(postBackData.raw, postBackData.time) })
+  //       break;
+  //     case HDR_SERVICES_TYPE._4t20:
+  //       processedMessages.push({ serviceType: '_4T20', mac: postBackData.mac, ...get4T20(postBackData.raw, postBackData.time) })
+  //       break;
+  //     case HDR_SERVICES_TYPE.ntc:
+  //       processedMessages.push({ serviceType: 'NTC', mac: postBackData.mac, ...getNtc(postBackData.raw, postBackData.time) })
+  //       break;
+  //     case HDR_SERVICES_TYPE.pot:
+  //       processedMessages.push({ serviceType: 'POT', mac: postBackData.mac, ...getPot(postBackData.raw, postBackData.time) })
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // })
+
+  // /**
+  //  * Do something with the information...
+  //  */
+
+  // const _processDataAndAddToMetrics = (metrics, dataProcessed) => {
+  //   const dataProcessedCopy = Object.assign({}, dataProcessed);
+
+  //   const keyByService = {
+  //     "RMS2": 'rms2',
+  //     "RMMS": 'rmms',
+  //     "TEMP": 'temp'
+  //   };
+
+  //   const key = keyByService[dataProcessedCopy.serviceType];
+
+  //   // temperature doesn't have axis
+  //   if (!dataProcessedCopy.axis) {
+  //     _addNoAxisDataToMetrics(metrics, dataProcessedCopy, key);
+  //     return;
+  //   }
+
+  //   // Just one axis
+  //   if (dataProcessedCopy.axis !== 'all') {
+  //     const axisIndex = 0;
+  //     _addMonoAxisDataToMetrics(metrics, dataProcessedCopy, dataProcessedCopy.axis, axisIndex, key);
+  //     return;
+  //   }
+
+  //   // more than one axis   
+  //   _addAllAxisDataToMetrics(metrics, dataProcessedCopy, key);
+  // };
+
+  // const _addNoAxisDataToMetrics = (metrics, dataProcessedCopy, key) => {
+  //   const baseObj = Object.assign({}, dataProcessedCopy);
+  //   delete baseObj[key];
+  //   delete baseObj.time;
+
+  //   dataProcessedCopy[key].forEach((data, index) => {
+  //     metrics.push({
+  //       value: data,
+  //       time: dataProcessedCopy.time[index],
+  //       parameters: { ...baseObj }
+  //     });
+  //   });
+  // };
+
+  // const _addMonoAxisDataToMetrics = (metrics, dataProcessedCopy, axis, axisIndex, key) => {
+  //   const baseObj = Object.assign({}, dataProcessedCopy);
+  //   delete baseObj[key];
+  //   delete baseObj.time;
+  //   baseObj.axis = axis;
+
+  //   dataProcessedCopy[key].forEach((data, index) => {
+  //     metrics.push({
+  //       value: data[axisIndex],
+  //       time: dataProcessedCopy.time[index],
+  //       parameters: { ...baseObj }
+  //     });
+  //   });
+  // };
+
+  // const _addAllAxisDataToMetrics = (metrics, dataProcessedCopy, key) => {
+  //   const AXIS = ["x", "y", "z"];
+
+  //   dataProcessedCopy[key].forEach((_, index) => {
+  //     const axis = AXIS[index];
+  //     _addMonoAxisDataToMetrics(metrics, dataProcessedCopy, axis, index, key);
+  //   });
+  // };
+
+  // /**   
+  //   metrics =  [
+  //     {
+  //       "value": 10,
+  //       "time": "2022-01-19T00:30:00Z",
+  //       "parameters": {...}
+  //     }
+  //    ]     
+  //  */
+  // const metrics = [];
+
+  // processedMessages.forEach(data => {
+  //   if (data.serviceType !== "TEMP" && data.serviceType !== "RMMS" && data.serviceType !== "RMS2") return;
+  //   _processDataAndAddToMetrics(metrics, data);
+  // });
+
+  // // Metrics populated from here...
+
+  res.status(200).json({status:"OK"})
 
 
 
