@@ -7,16 +7,20 @@
  * There, we must process the data passing with through the library "hdr-process-data". In the controller there is an example.
  */
 const express = require('express')
+
 const app = express()
-
+// controller for post data processing
 const controller = require('./controller/post.controller')
-
+// partner url name
+// ex : https://mypartnerlinkapi.com/partner_post_url
 const PARTNER_POST_URL = "/partner_post_url"
 
 app.use(express.json())
+// post route for receive data
 app.post(PARTNER_POST_URL, controller)
 
 const PORT = process.env.PORT || 3000
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)
 })
