@@ -1,3 +1,5 @@
+:atenção: Repositório com o intuito de exemplificar. NÃO RECOMENDAMOS a utilização deste repositório para aplicações em ambientes produtivos.:atenção:
+
 # Passo a passo:
 
 ### ` É recomendável usar Linux como servidor.`
