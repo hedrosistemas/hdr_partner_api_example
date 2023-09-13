@@ -1,3 +1,5 @@
+:atenção: Repositório com o intuito de exemplificar. NÃO RECOMENDAMOS a utilização deste repositório para aplicações em ambientes produtivos.:atenção:
+
 # Passo a passo:
 
 ### ` É recomendável usar Linux como servidor.`
@@ -6,7 +8,7 @@
 Nós usamos a versão Stable do Node.
 
 ### Windows
-Vá até o site do [NodeJS](https://nodejs.org/en/) e baixe a versão LTS (atualmente 14.18.0). Após a instalação, abra o **Powershell** e rode:
+Vá até o site do [NodeJS](https://nodejs.org/en/) e baixe a versão LTS (atualmente 18.17.1). Após a instalação, abra o **Powershell** e rode:
 ```bash
   npm install -g yarn  
 ```
@@ -23,7 +25,7 @@ source ~/.profile
 ```
 Com o **NVM** instalado, é hora de instalar o Node. Para instalá-lo, rode:
 ```bash
-nvm install 14.18.0
+nvm install --lts
 ```
 
 Para verificar sua instalação, digite:
@@ -42,7 +44,7 @@ Tanto Windows quanto Linux, navegue até o diretório do projeto e rode:
 yarn
 ```
 
-## Rodando o projeto
+<!-- ## Rodando o projeto
 Antes de rodar o projeto, é necessário mudar as URLs.
 
 - <code>PARTNER_POST_URL</code> é o endpoint para onde a Hedro irá mandar o JSON de dados. Então, usando como exemplo de que seu domínio é https://www.partner.com/, <code>PARTNER_POST_URL</code> seria o fim dessa url, ficando assim: https://www.partner.com/<code>PARTNER_POST_URL</code>
@@ -56,7 +58,7 @@ node main.js
 
 ## Observações
 Quando for rodar em um servidor, é válido fazer uso do **PM2**, que é um gerenciador de processos. Através dele é possível colocar o projeto para rodar e, caso venha a dar alguma erro de reinicialização do servidor ou algo do tipo, ele automaticamente reinicializa os processos salvos.
-Caso queira saber mais, acesse o [site do PM2](https://pm2.keymetrics.io/docs/usage/quick-start/).
+Caso queira saber mais, acesse o [site do PM2](https://pm2.keymetrics.io/docs/usage/quick-start/). -->
 
 # Entradas e Saídas:
 
