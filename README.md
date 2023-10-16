@@ -86,8 +86,8 @@ yarn
     applicationVersion: 'v1.1.0',
     rssi: -87,
     serialNumber: "string",
-    raw: "03F60072887777CA",
-    time: "1595936680", // timestamps with time zone in Seconds or GMT 0
+    raw: "01257373CE0100303730323233",
+    time: 1595936680, // timestamps with time zone in Seconds or GMT 0
   },
   {
     serviceType: 1, // temp
@@ -98,7 +98,7 @@ yarn
     rssi: -87,
     serial: "string",
     raw: "034c011603ba07b607b207",
-    time: "1595936680", // timestamps with time zone in Seconds or GMT 0
+    time: 1595936680, // timestamps with time zone in Seconds or GMT 0
   },
   {
     serviceType: 3, // rms2
@@ -120,7 +120,7 @@ yarn
     rssi: -87,
     serial: "string",
     raw: "030d048501050d04040406",
-    time: "1595936680", // timestamps with time zone in Seconds or GMT 0
+    time: 1595936680, // timestamps with time zone in Seconds or GMT 0
   },
   {
     serviceType: 5, // Inclinometro (TILT)
@@ -131,7 +131,7 @@ yarn
     rssi: -87,
     serial: "string",
     raw: "033b058701057c057c047c057c047d05",
-    time: "1595936680", // timestamps with time zone in Seconds or GMT 0
+    time: 1595936680, // timestamps with time zone in Seconds or GMT 0
   },
   {
     serviceType: 6, // fft
@@ -206,8 +206,8 @@ yarn
       temp: 27,
       maxTemp: 27,
       voltage: 3.28,
-      lastReset: '1969-12-31T23:59:50.000Z',
-      time: '1970-01-01T00:00:00.000Z'
+      lastReset: '2020-07-28T11:42:40.000Z',
+      time: '2020-07-28T11:42:40.000Z'
  },
  { // TEMP
       msgType: 3,
