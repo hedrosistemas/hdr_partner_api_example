@@ -86,7 +86,7 @@ yarn
     applicationVersion: 'v1.1.0',
     rssi: -87,
     serialNumber: "string",
-    raw: "03F60072887777CA",
+    raw: "03000072BB6868E80A000000",
     time: "1595936680", // timestamps with time zone in Seconds or GMT 0
   },
   {
