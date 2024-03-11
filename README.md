@@ -59,12 +59,12 @@ yarn
 ## Formato da requisição POST
 
 ```js
-[      
+[
   {
     mac: "string"
     serialNumber: "string"
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: '2.0.0',
+    applicationVersion: '1.1.0',
     rssi: "number",
     raw: "string",
     time: "string",
@@ -82,8 +82,8 @@ yarn
     serviceType: 0, // health
     collectorId: 1,
     mac: "4548AA000001",
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: "2.0.0",
+    applicationVersion: "1.1.0",
     rssi: -87,
     serialNumber: "string",
     raw: "03000072BB6E6EE50A000000",
@@ -92,8 +92,8 @@ yarn
   {
     serviceType: 1, // temp
     collectorId: 1,
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: "2.0.0",
+    applicationVersion: "1.1.0",
     mac: "4548AA000001",
     rssi: -87,
     serial: "string",
@@ -103,8 +103,8 @@ yarn
   {
     serviceType: 3, // rms2
     collectorId: 1,
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: "2.0.0",
+    applicationVersion: "1.1.0",
     mac: "4548AA000001",
     rssi: -87,
     serial: "string",
@@ -114,8 +114,8 @@ yarn
   {
     serviceType: 4, // rms da velocidade (rmms)
     collectorId: 1,
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: "2.0.0",
+    applicationVersion: "1.1.0",
     mac: "4548AA000001",
     rssi: -87,
     serial: "string",
@@ -125,8 +125,8 @@ yarn
   {
     serviceType: 5, // Inclinometro (TILT)
     collectorId: 1,
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: "2.0.0",
+    applicationVersion: "1.1.0",
     mac: "4548AA000001",
     rssi: -87,
     serial: "string",
@@ -136,8 +136,8 @@ yarn
   {
     serviceType: 6, // fft
     collectorId: 1,
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: "2.0.0",
+    applicationVersion: "1.1.0",
     mac: "4548AA000001",
     rssi: -87,
     serial: "string",
@@ -147,8 +147,8 @@ yarn
   {
     serviceType: 7, // ACC RAW
     collectorId: 1,
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: "2.0.0",
+    applicationVersion: "1.1.0",
     mac: "4548AA000001",
     rssi: -87,
     serial: "string",
@@ -158,8 +158,8 @@ yarn
   {
     serviceType: 9, // _4t20
     collectorId: 1,
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: "2.0.0",
+    applicationVersion: "1.1.0",
     mac: "4548AA000001",
     rssi: -87,
     serial: "string",
@@ -169,8 +169,8 @@ yarn
   {
     serviceType: 10, // ntc
     collectorId: 1,
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: "2.0.0",
+    applicationVersion: "1.1.0",
     mac: "4548AA000001",
     rssi: -87,
     serial: "string",
@@ -180,8 +180,8 @@ yarn
   {
     serviceType: 11, // POT
     collectorId: 1,
-    protocolVersion: 'v2.0.0',
-    applicationVersion: 'v1.1.0',
+    protocolVersion: "2.0.0",
+    applicationVersion: "1.1.0",
     mac: "4548AA000001",
     rssi: -87,
     serial: "string",
@@ -190,6 +190,41 @@ yarn
   },
 ];
 ```
+
+## Instruções de Descompatatação de Dados recebidos
+
+Para garantir a correta descompatatação de dados, é fundamental que todas as solicitações enviem explicitamente a versão do Protocolo e da Aplicação. Estes detalhes são cruciais para o processamento adequado dos dados pela biblioteca.
+
+## Exemplo de Solicitação
+
+Abaixo está um exemplo de como utilizar a função `getHealth`, incluindo as informações de versão do protocolo e da aplicação:
+
+```js
+// Definição da função getHealth
+getHealth(raw: string, time: string | number, {
+  protocolVersion: string;
+  applicationVersion: string;
+})
+
+// Exemplo de uso
+getHealth("03000072BB6E6EE50A000000", 1595936680, {
+  protocolVersion: "2.0.0";
+  applicationVersion: "1.1.0";
+})
+
+```
+
+# Importância das Versões de Protocolo e Aplicação
+
+A especificação correta das versões `protocolVersion` e `applicationVersion` é **crucial**. Caso essas informações não sejam passadas corretamente no momento da solicitação e atribuido os valores como padrão:
+
+- **protocolVersion** = "1.1.0"
+- **applicationVersion** = "0.1.0"
+
+Isso pode resultar em um problema significativo de versionamento, onde a descompatatação é realizada de maneira incorreta, potencialmente levando a interpretações erradas dos dados processados.
+
+## :warning: Atenção! :warning:
+É de extrema importância garantir a correta especificação das versões do protocolo e da aplicação em todas as solicitações. O não cumprimento dessa prática pode resultar em erros de processamento que afetam diretamente a integridade e a precisão das medições recebidas pela biblioteca.
 
 ## Corpo da requisição POST depois de ter passado pela biblioteca hdr-process-data
 
